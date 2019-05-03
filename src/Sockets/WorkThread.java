@@ -26,6 +26,7 @@ public class WorkThread implements Runnable
     {
         try
         {
+
             bis = new java.io.BufferedInputStream(mSocket.getInputStream());
             bos = new java.io.BufferedOutputStream(mSocket.getOutputStream());
 
