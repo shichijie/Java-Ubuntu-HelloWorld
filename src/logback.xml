@@ -1,0 +1,58 @@
+<configuration scan="true" scanPeriod="30 seconds">
+    <appender name="SERVICE.ROLLING"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <prudent>true</prudent>
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>log/service-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date %level [%thread] %logger{5}#%method [%line] %msg%n</pattern>
+        </encoder>
+    </appender>
+    <!-- 将日志写入数据库
+    <appender name="SERVICE.DB" class="com.geor.cmp.content.log.DBAppender">
+        <connectionSource class="ch.qos.logback.core.db.DataSourceConnectionSource">
+            <dataSource class="com.alibaba.druid.pool.DruidDataSource">
+                <driverClassName>com.mysql.jdbc.Driver</driverClassName>
+                <url>jdbc:mysql://192.168.1.235:3306/cmp?characterEncoding=utf8</url>
+                <username>root</username>
+                <password>123456</password>
+            </dataSource>
+        </connectionSource>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+    </appender>
+     -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date %level [%thread] %logger{5}#%method [%line] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <root level="debug">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="SERVICE.ROLLING"/>
+    </root>
+    <!--
+   <logger name="org.nutz.ioc" level="info">
+       <appender-ref ref="STDOUT" />
+       <appender-ref ref="SERVICE.ROLLING" />
+   </logger>
+   <logger name="com.geor.common.container.PropertyMap" level="info">
+       <appender-ref ref="STDOUT" />
+       <appender-ref ref="SERVICE.ROLLING" />
+   </logger>
+   <logger name="com.geor.grs.server" level="trace">
+       <appender-ref ref="STDOUT" />
+   <appender-ref ref="SERVICE.ROLLING" />
+   </logger>
+     -->
+</configuration>
