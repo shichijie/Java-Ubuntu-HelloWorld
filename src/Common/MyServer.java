@@ -1,11 +1,9 @@
-package Sockets;
+package Common;
 
-import com.sun.xml.internal.ws.transport.http.server.EndpointImpl;
+import Sockets.WorkThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.ws.Endpoint;
-import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -33,7 +31,7 @@ public class MyServer
         {
             logger.debug("start listening...");
 
-            socket = new ServerSocket(9995);
+            socket = new ServerSocket(ConfigHelper.LISTENER_PORT);
             blListening = true;
             new Thread(
                     new Runnable()

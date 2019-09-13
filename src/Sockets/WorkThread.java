@@ -1,9 +1,11 @@
 package Sockets;
 
+import Common.AccountInfoStruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.Socket;
+import Http.HttpHelper;
 
 public class WorkThread implements Runnable
 {
@@ -30,17 +32,47 @@ public class WorkThread implements Runnable
             bis = new java.io.BufferedInputStream(mSocket.getInputStream());
             bos = new java.io.BufferedOutputStream(mSocket.getOutputStream());
 
-            String sData = ReceiveMessage();
-            if (sData == null || sData.length() == 0)
+            String strMessage = ReceiveMessage();
+            if (strMessage == null || strMessage.length() == 0)
             {
                 logger.info("receive data error return to client");
-                SendMessage("no data received...");
+                String strRetMessage = AccountInfoStruct.GetRetMessage("DUMMY", "9999", "receive data failed");
+                SendMessage(strRetMessage);
+                return;
+            }
+
+            AccountInfoStruct accountInstance = AccountInfoStruct.BuildObject(strMessage);
+            if (accountInstance == null)
+            {
+                logger.info("try to build account instance via message failed");
+                String strRetMessage = AccountInfoStruct.GetRetMessage("DUMMY", "9998", "build account struct instance failed");
+                SendMessage(strRetMessage);
                 return;
             }
             //try to do something here...
-
-            SendMessage("do something ok!");
-            return;
+            if (accountInstance.strTransCode.equals("JBHWYXCX") == true)
+            {
+                logger.info("try to invoke http GetHttpResponse_JBH");
+                HttpHelper.GetHttpResponse_JBH(accountInstance);
+                String strRetMessage = AccountInfoStruct.GetRetMessage(accountInstance);
+                SendMessage(strRetMessage);
+                return;
+            }
+            else if (accountInstance.strTransCode.equals("JXHCX") == true)
+            {
+                logger.info("try to invoke http GetHttpResponse_JXH");
+                HttpHelper.GetHttpResponse_JXH(accountInstance);
+                String strRetMessage = AccountInfoStruct.GetRetMessage(accountInstance);
+                SendMessage(strRetMessage);
+                return;
+            }
+            else
+            {
+                logger.info("unknown trans code = " + accountInstance.strTransCode);
+                String strRetMessage = AccountInfoStruct.GetRetMessage(accountInstance.strTransCode, "9997", "unknown trans code");
+                SendMessage(strRetMessage);
+                return;
+            }
         }
         catch (Exception ex)
         {
